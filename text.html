@@ -55,6 +55,7 @@
     changes.innerHTML = `DELETED: ${diff.lineCountDeleted} / INSERTED: ${diff.lineCountInserted}`
 
     let result = ''
+    let skipped = false
     diff.lines.forEach((line, index) => {
       if (!linesDifference && index === 0) result += '\t'
 
@@ -62,17 +63,39 @@
         if (linesDifference) {
           result = result + `+\t` + line.line
         } else {
-          if (!result.endsWith('\r\n')) result += '\r\n'
-          result = result + `+\t` + line.line
-          result += '\r\n'
+          if (skipped) {
+            result += line.line
+          } else if (!result.endsWith('\r\n')) {
+            result = result + `\r\n+\t` + line.line
+          } else {
+            result = result + `+\t` + line.line
+          }
+
+          if (diff.lines[index+1]?.aIndex === -1) {
+            skipped = true
+            return
+          } else {
+            result += '\r\n'
+          }
         }
       } else if (line.bIndex === -1) {
         if (linesDifference) {
           result = result + `-\t` + line.line
         } else {
-          if (!result.endsWith('\r\n')) result += '\r\n'
-          result = result + `-\t` + line.line
-          result += '\r\n'
+          if (skipped) {
+            result += line.line
+          } else if (!result.endsWith('\r\n')) {
+            result = result + `\r\n-\t` + line.line
+          } else {
+            result = result + `-\t` + line.line
+          }
+
+          if (diff.lines[index+1]?.bIndex === -1) {
+            skipped = true
+            return
+          } else {
+            result += '\r\n'
+          }
         }
       } else {
         if (linesDifference) {
@@ -83,6 +106,7 @@
         }
       }
 
+      skipped = false
       if (linesDifference && index+1 < diff.lines.length) result += '\r\n'
     })
     area3.value = result
