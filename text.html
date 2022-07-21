@@ -9,12 +9,15 @@
   <div class='col-centered'>
     <h1><a href='index.html'>INDEX</a></h1>
 
+    <button class='button button--text' onclick='changeDiffType()'>
+      <span class='button__text' id='button'>LINES</span>
+    </button>
     <div>
       <textarea name='AREA1' placeholder='ENTER FIRST TEXT' cols='30' rows='7' id='area1'></textarea>
       <textarea name='AREA2' placeholder='ENTER SECOND TEXT' cols='30' rows='7' id='area2'></textarea>
     </div>
-    <button class='button button--text' onclick='buttonClick()'>
-      <span class='button__text' id='button'>FIND DIFFERENCE</span>
+    <button class='button button--text' onclick='checkDiff()'>
+      <span class='button__text'>FIND DIFFERENCE</span>
     </button>
     <span id='changes'>&nbsp;</span>
     <textarea name='AREA3' placeholder='RESULT' cols='40' rows='10' id='area3'></textarea>
@@ -23,7 +26,21 @@
 
 <script src='patienceDiff.js'></script>
 <script>
-  function buttonClick() {
+  let linesDifference = true
+
+  function changeDiffType() {
+    if (linesDifference) {
+      const button = document.getElementById('button')
+      linesDifference = false
+      button.innerHTML = 'CHARACTERS'
+    } else {
+      const button = document.getElementById('button')
+      linesDifference = true
+      button.innerHTML = 'LINES'
+    }
+  }
+
+  function checkDiff() {
     const area1 = document.getElementById('area1')
     const area2 = document.getElementById('area2')
     const area3 = document.getElementById('area3')
@@ -32,20 +49,41 @@
     const text1 = area1.value
     const text2 = area2.value
 
-    const diff = patienceDiffPlus( text1.split('\n'), text2.split('\n') )
+    const splitChar = linesDifference ? '\n' : ''
+
+    const diff = patienceDiffPlus( text1.split(splitChar), text2.split(splitChar) )
     changes.innerHTML = `DELETED: ${diff.lineCountDeleted} / INSERTED: ${diff.lineCountInserted}`
 
     let result = ''
     diff.lines.forEach((line, index) => {
+      if (!linesDifference && index === 0) result += '\t'
+
       if (line.aIndex === -1) {
-        result = result + '+\t' + line.line
+        if (linesDifference) {
+          result = result + `+\t` + line.line
+        } else {
+          if (!result.endsWith('\r\n')) result += '\r\n'
+          result = result + `+\t` + line.line
+          result += '\r\n'
+        }
       } else if (line.bIndex === -1) {
-        result = result + '-\t' + line.line
+        if (linesDifference) {
+          result = result + `-\t` + line.line
+        } else {
+          if (!result.endsWith('\r\n')) result += '\r\n'
+          result = result + `-\t` + line.line
+          result += '\r\n'
+        }
       } else {
-        result = result + '\t' + line.line
+        if (linesDifference) {
+          result = result + `\t` + line.line
+        } else {
+          if (result.endsWith('\r\n')) result += '\t'
+          result = result + line.line
+        }
       }
 
-      if (index+1 < diff.lines.length) result += '\r\n'
+      if (linesDifference && index+1 < diff.lines.length) result += '\r\n'
     })
     area3.value = result
   }
