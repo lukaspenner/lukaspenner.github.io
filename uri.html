@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel='stylesheet' href='index.css'>
+</head>
+
+<body>
+  <div class='col-centered'>
+    <h1><a href='index.html'>INDEX</a></h1>
+
+    <textarea name='DECODE' placeholder='ENTER URI TO DECODE' cols='40' rows='5' onfocus='decodeFocus(this)' id='decodeArea'></textarea>
+    <button class='button button--text' onclick='buttonClick()'>
+      <span class='button__text' id='button'>DECODE</span>
+    </button>
+    <textarea name='ENCODE' placeholder='ENTER URI TO ENCODE' cols='40' rows='5' onfocus='encodeFocus(this)' id='encodeArea'></textarea>
+  </div>
+</body>
+
+<script>
+  let decode = true
+
+  function decodeFocus(that) {
+    const button = document.getElementById('button')
+    button.innerHTML = 'DECODE'
+    decode = true
+    that.select()
+  }
+
+  function encodeFocus(that) {
+    const button = document.getElementById('button')
+    button.innerHTML = 'ENCODE'
+    decode = false
+    that.select()
+  }
+
+  function buttonClick() {
+    if (decode) {
+      const decodeArea = document.getElementById('decodeArea')
+      string = decodeURI(decodeArea.value)
+      const encodeArea = document.getElementById('encodeArea')
+      encodeArea.value = string
+    } else {
+      const encodeArea = document.getElementById('encodeArea')
+      string = encodeURI(encodeArea.value)
+      const decodeArea = document.getElementById('decodeArea')
+      decodeArea.value = string
+    }
+  }
+</script>
+
+</html>

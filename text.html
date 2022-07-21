@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel='stylesheet' href='index.css'>
+</head>
+
+<body>
+  <div class='col-centered'>
+    <h1><a href='index.html'>INDEX</a></h1>
+
+    <div>
+      <textarea name='AREA1' placeholder='ENTER FIRST TEXT' cols='30' rows='7' id='area1'></textarea>
+      <textarea name='AREA2' placeholder='ENTER SECOND TEXT' cols='30' rows='7' id='area2'></textarea>
+    </div>
+    <button class='button button--text' onclick='buttonClick()'>
+      <span class='button__text' id='button'>FIND DIFFERENCE</span>
+    </button>
+    <span id='changes'>&nbsp;</span>
+    <textarea name='AREA3' placeholder='RESULT' cols='40' rows='10' id='area3'></textarea>
+  </div>
+</body>
+
+<script src='patienceDiff.js'></script>
+<script>
+  function buttonClick() {
+    const area1 = document.getElementById('area1')
+    const area2 = document.getElementById('area2')
+    const area3 = document.getElementById('area3')
+    const changes = document.getElementById('changes')
+
+    const text1 = area1.value
+    const text2 = area2.value
+
+    const diff = patienceDiffPlus( text1.split('\n'), text2.split('\n') )
+    changes.innerHTML = `DELETED: ${diff.lineCountDeleted} / INSERTED: ${diff.lineCountInserted}`
+
+    let result = ''
+    diff.lines.forEach((line, index) => {
+      if (line.aIndex === -1) {
+        result = result + '+\t' + line.line
+      } else if (line.bIndex === -1) {
+        result = result + '-\t' + line.line
+      } else {
+        result = result + '\t' + line.line
+      }
+
+      if (index+1 < diff.lines.length) result += '\r\n'
+    })
+    area3.value = result
+  }
+</script>
+
+</html>
