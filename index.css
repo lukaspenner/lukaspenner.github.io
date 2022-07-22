@@ -45,7 +45,6 @@ html {
 body {
   display: flex;
   flex-direction: column;
-  overflow-y: hidden;
   font-family: "Helvetica Neue LT W05 65 Medium", Helvetica, Arial, sans-serif;
   color: #000;
   line-height: 1.2;
@@ -90,7 +89,6 @@ html::-webkit-scrollbar {
 }
 
 body {
-  overflow: hidden;
   min-width: 100%;
   display: flex;
   justify-content: center
@@ -145,6 +143,10 @@ h5,
 h6 {
   margin-top: 0;
   margin-bottom: .8rem
+}
+
+.margin-bottom {
+  margin-bottom: .8rem;
 }
 
 p {
